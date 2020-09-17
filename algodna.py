@@ -64,9 +64,6 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
-    
-
-
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
@@ -76,7 +73,6 @@ class Ui_MainWindow(object):
         self.submitBtn.setText(_translate("MainWindow", "Submit"))
         self.output_lbl.setText(_translate("MainWindow", "Output:"))
 
-    
 
 
 if __name__ == "__main__":
