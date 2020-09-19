@@ -45,8 +45,7 @@ class Ui_MainWindow(object):
         font.setPointSize(12)
         self.output_lbl.setFont(font)
         self.output_lbl.setObjectName("output_lbl")
-        self.outputTxt = QtWidgets.QTextEdit(self.centralwidget)
-        self.outputTxt.setEnabled(False)
+        self.outputTxt = QtWidgets.QTextBrowser(self.centralwidget)
         self.outputTxt.setGeometry(QtCore.QRect(340, 385, 301, 141))
         self.outputTxt.setObjectName("outputTxt")
         self.inputTxt = QtWidgets.QLineEdit(self.centralwidget)
@@ -72,8 +71,6 @@ class Ui_MainWindow(object):
         self.file_lbl.setText(_translate("MainWindow", "File Name:"))
         self.submitBtn.setText(_translate("MainWindow", "Submit"))
         self.output_lbl.setText(_translate("MainWindow", "Output:"))
-
-
 
 if __name__ == "__main__":
     import sys

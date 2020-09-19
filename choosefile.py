@@ -38,6 +38,7 @@ class MyWindow(QtWidgets.QMainWindow):
                 else:
                     i += 1
             if j == M:
+                foundPattern = "Found pattern at index " + str(i-j)
                 print("Found pattern at index " + str(i-j))
                 count += 1
                 j = lps[j-1]
@@ -45,6 +46,8 @@ class MyWindow(QtWidgets.QMainWindow):
         print("End of search")
         print("Time taken = "  + str(end-start))
         print(count)
+        self.ui.outputTxt.setText(foundPattern + "\nTime taken = " + str(end-start))
+
 
     def computeLPSArray(self,pat, M, lps):
         len = 0  # length of the previous longest prefix suffix

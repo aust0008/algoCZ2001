@@ -11,51 +11,30 @@ class MyWindow(QtWidgets.QMainWindow):
         self.ui.uploadBtn.clicked.connect(self.getfiles)
         self.ui.submitBtn.clicked.connect(self.displayOutput)
 
-    def StringSearch(self,pat, txt):
-        M = len(pat)
+    def search(self, pat, txt): 
+        M = len(pat) 
         N = len(txt) 
-
-        # index for the fna file
-        i = 0
-        # index for string query
-        j = 0
+        count=0
         start = time.time()
-        totalNumberOfPatternFound = 0
-    
-        while i < N:
-
-            #when char of string and fna file matches
-            if pat[j] == txt[i]:
-                i += 1
+        # A loop to slide pat[] one by one */ 
+        for i in range(N - M + 1): 
+            j = 0
+            
+            # For current index i, check  
+            # for pattern match */ 
+            while(j < M): 
+                if (txt[i + j] != pat[j]): 
+                    break
                 j += 1
-
-            # proceed to next index for both string query and fna
-            else:
-
-                #if mismatch occur after initial match
-                if j != 0:
-                    # to know how many char in the string has been searched
-                    j = j-1
-                    # set index of string to backtrack
-                    i-=j
-                    #restart comparison of the string query from the first character
-                    j=0
-
-                    
-                else:
-                    #increase fna index to compare next char
-                    i += 1
-            # if string query matches fna indexes, return index found at
-            if j == M:
-                foundPattern = "Found pattern at index " + str(i-j)
-                print("Found pattern at index " + str(i-j))
-                totalNumberOfPatternFound += 1
-                i-= M - 1
-                j=0
+    
+            if (j == M):  
+                foundPattern = "Pattern found at index " + str(i)
+                print("Pattern found at index ", i)
+                count+=1
         end = time.time()
         print("End of search")
         print("Time taken = "  + str(end-start))
-        print(totalNumberOfPatternFound)
+        print(count)
         self.ui.outputTxt.setText(foundPattern + "\nTime taken = " + str(end-start))
 
 
@@ -63,7 +42,7 @@ class MyWindow(QtWidgets.QMainWindow):
         global pat,txt
         pat = str(self.ui.inputTxt.text())
         txt = str(my_file_contents)
-        self.StringSearch(pat, txt)
+        self.search(pat, txt)
 
     def getfiles(self):
         fileName, _ = QtWidgets.QFileDialog.getOpenFileName(self, 'Single File', QtCore.QDir.rootPath(), '*.fna')
