@@ -21,6 +21,10 @@ class MyWindow(QtWidgets.QMainWindow):
         j = 0
         start = time.time()
         totalNumberOfPatternFound = 0
+        lps = [0]*M 
+    
+        # Preprocess the pattern (calculate lps[] array) 
+        self.computeLPSArray(pat, M, lps) 
     
         while i < N:
 
@@ -28,34 +32,48 @@ class MyWindow(QtWidgets.QMainWindow):
             if pat[j] == txt[i]:
                 i += 1
                 j += 1
-
-            # proceed to next index for both string query and fna
-            else:
-
-                #if mismatch occur after initial match
-                if j != 0:
-                    # to know how many char in the string has been searched
-                    j = j-1
-                    # set index of string to backtrack
-                    i-=j
-                    #restart comparison of the string query from the first character
-                    j=0
-
-                    
-                else:
-                    #increase fna index to compare next char
-                    i += 1
             # if string query matches fna indexes, return index found at
             if j == M:
                 print("Found pattern at index " + str(i-j))
                 totalNumberOfPatternFound += 1
-                i-= M - 1
-                j=0
+                j = lps[j-1]
+
+            # proceed to next index for both string query and fna
+            elif i < N and pat[j] != txt[i]:
+
+                #if mismatch occur after initial match
+                if j != 0: 
+                    j = lps[j-1] 
+                else: 
+                    i += 1
         end = time.time()
         print("End of search")
         print("Time taken = "  + str(end-start))
         print(totalNumberOfPatternFound)
 
+    def computeLPSArray(self, pat, M, lps): 
+        len = 0 # length of the previous longest prefix suffix 
+    
+        lps[0] # lps[0] is always 0 
+        i = 1
+    
+        # the loop calculates lps[i] for i = 1 to M-1 
+        while i < M: 
+            if pat[i]== pat[len]: 
+                len += 1
+                lps[i] = len
+                i += 1
+            else: 
+                # This is tricky. Consider the example. 
+                # AAACAAAA and i = 7. The idea is similar  
+                # to search step. 
+                if len != 0: 
+                    len = lps[len-1] 
+    
+                    # Also, note that we do not increment i here 
+                else: 
+                    lps[i] = 0
+                    i += 1
 
     def displayOutput(self):
         global pat,txt
