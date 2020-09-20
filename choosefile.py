@@ -54,6 +54,7 @@ class MyWindow(QtWidgets.QMainWindow):
             # if string query matches fna indexes, return index found at
             if j == M:
                 print("Found pattern at index " + str(i-j))
+                self.ui.outputTxt.append("Found pattern at index " + str(i-j))
                 totalNumberOfPatternFound += 1
                 i-= M - 1
                 j=0
@@ -67,6 +68,7 @@ class MyWindow(QtWidgets.QMainWindow):
     def StringSearch(self, pat, txt): 
         M = len(pat) 
         N = len(txt)
+        #indexM indicates the highest index of the pattern string
         indexM = M-1
         count=0
         i= indexM
@@ -74,46 +76,65 @@ class MyWindow(QtWidgets.QMainWindow):
         backtrack = 1
         shift=0
         count = 0
+         # To indicate where should the next index[i] move to 
         ptr = indexM
-        #start = time.time()
         start = time.perf_counter()
         while i<N:
             if j>=0:
+                # final character of pattern matches
                 if txt[i] == pat[j]:
                     i-=1
                     j-=1
 
                 else:
+                    # check if current text index matches if it matches pattern for index j-backtrack
                     if txt[i] == pat[j-backtrack]:
                         j = j-backtrack
+                        #to let the program know how many index it should move forward
                         shift = indexM-j
+                        # shifting the i according to where the j matches with the current i
                         i= i+shift
+                        #reset j to the last character of the pattern
                         j=indexM
+                        #shift the pointer to the next character it is supposed to point to 
                         ptr=i
+                        #reset the backtrack to 1
                         backtrack=1
                     else:
                         backtrack +=1
                         if j-backtrack < 0:
+                            #when index i doesnt appear in any of the M, shift i by the length of the pattern
                             i+=M
+                            #reset j to the last character of the pattern
                             j=indexM
+                            #reset the backtrack to 1
                             backtrack=1
+                            #set the pointer to where i is currently at
                             ptr = i
             
             if j<0:
+                #shift i to the next character
                 i+=1
+                #set pointer to the next character
                 ptr+=1
-                self.ui.outputTxt.append("Found pattern at index " + str(i))
                 print("Pattern found at index ", i)
+                self.ui.outputTxt.append("Found pattern at index " + str(i))
+
+                #increment the number of pattern found
                 count+=1
+                # set i to the character it is supposed to point to
                 i=ptr
+                #reset j to the last character 
                 j=indexM
+                #when all the txt string has reached the end, exit loop
                 if i==N-1:
                     break
 
-        #end = time.time()
         end = time.perf_counter()
         print("End of search")
-        #self.ui.outputTxt.append("Time taken = "  + str(end-start))
+        if count==0:
+            self.ui.outputTxt.append("No matches found, please try with a new input")
+        self.ui.outputTxt.append("Time taken = "  + str(end-start))
         print("Time taken = "  + str(end-start))
         self.ui.outputTxt.append("Count = "  + str(count))
         print(count) 
