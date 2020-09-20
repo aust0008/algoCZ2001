@@ -10,74 +10,123 @@ class MyWindow(QtWidgets.QMainWindow):
         self.ui.setupUi(self)
         self.ui.uploadBtn.clicked.connect(self.getfiles)
         self.ui.submitBtn.clicked.connect(self.displayOutput)
+        self.ui.typeComboBox.currentIndexChanged.connect(self.comboBoxReset)
+    
+    def comboBoxReset(self):
+        self.ui.fileUploadTxt.setText("")
+        self.ui.inputTxt.setText("")
+        self.ui.outputTxt.setText("")
 
-    def KMPSearch(self,pat, txt):
+    def search(self,pat, txt):
         M = len(pat)
-        N = len(txt)
-        # create lps[] that will hold the longest prefix suffix
-        # values for pattern
-        lps = [0]*M
-        j = 0  # index for pat[]
-        # Preprocess the pattern (calculate lps[] array)
+        N = len(txt) 
+
+        # index for the fna file
+        i = 0
+        # index for string query
+        j = 0
         start = time.time()
-        count = 0
-        self.computeLPSArray(pat, M, lps)
-        i = 0  # index for txt[]
+        totalNumberOfPatternFound = 0
+    
         while i < N:
+
+            #when char of string and fna file matches
             if pat[j] == txt[i]:
                 i += 1
                 j += 1
 
-            # mismatch after j matches
-            #elif i < N and pat[j] != txt[i]:
+            # proceed to next index for both string query and fna
             else:
-                # Do not match lps[0..lps[j-1]] characters,
-                # they will match anyway
+
+                #if mismatch occur after initial match
                 if j != 0:
-                    j = lps[j-1]
+                    # to know how many char in the string has been searched
+                    j = j-1
+                    # set index of string to backtrack
+                    i-=j
+                    #restart comparison of the string query from the first character
+                    j=0
+
+                    
                 else:
+                    #increase fna index to compare next char
                     i += 1
+            # if string query matches fna indexes, return index found at
             if j == M:
-                foundPattern = "Found pattern at index " + str(i-j)
                 print("Found pattern at index " + str(i-j))
-                count += 1
-                j = lps[j-1]
+                totalNumberOfPatternFound += 1
+                i-= M - 1
+                j=0
+            
         end = time.time()
         print("End of search")
         print("Time taken = "  + str(end-start))
-        print(count)
-        self.ui.outputTxt.setText(foundPattern + "\nTime taken = " + str(end-start))
+        print(totalNumberOfPatternFound)
 
 
-    def computeLPSArray(self,pat, M, lps):
-        len = 0  # length of the previous longest prefix suffix
+    def StringSearch(self, pat, txt): 
+        M = len(pat) 
+        N = len(txt)
+        indexM = M-1
+        count=0
+        i= indexM
+        j= indexM
+        backtrack = 1
+        shift=0
+        count = 0
+        ptr = indexM
+        #start = time.time()
+        start = time.perf_counter()
+        while i<N:
+            if j>=0:
+                if txt[i] == pat[j]:
+                    i-=1
+                    j-=1
 
-        lps[0]  # lps[0] is always 0
-        i = 1
-        # the loop calculates lps[i] for i = 1 to M-1
-        while i < M:
-            if pat[i] == pat[len]:
-                len += 1
-                lps[i] = len
-                i += 1
-            else:
-                # This is tricky. Consider the example.
-                # AAACAAAA and i = 7. The idea is similar
-                # to search step.
-                if len != 0:
-                    len = lps[len-1]
-
-                    # Also, note that we do not increment i here
                 else:
-                    lps[i] = 0
-                    i += 1
+                    if txt[i] == pat[j-backtrack]:
+                        j = j-backtrack
+                        shift = indexM-j
+                        i= i+shift
+                        j=indexM
+                        ptr=i
+                        backtrack=1
+                    else:
+                        backtrack +=1
+                        if j-backtrack < 0:
+                            i+=M
+                            j=indexM
+                            backtrack=1
+                            ptr = i
+            
+            if j<0:
+                i+=1
+                ptr+=1
+                self.ui.outputTxt.append("Found pattern at index " + str(i))
+                print("Pattern found at index ", i)
+                count+=1
+                i=ptr
+                j=indexM
+                if i==N-1:
+                    break
 
-
+        #end = time.time()
+        end = time.perf_counter()
+        print("End of search")
+        #self.ui.outputTxt.append("Time taken = "  + str(end-start))
+        print("Time taken = "  + str(end-start))
+        self.ui.outputTxt.append("Count = "  + str(count))
+        print(count) 
+        
+   
     def displayOutput(self):
         global pat,txt
         pat = str(self.ui.inputTxt.text())
         txt = str(my_file_contents)
-        self.KMPSearch(pat, txt)
+        if (self.ui.typeComboBox == 0):
+            self.search(pat, txt)
+        else:
+            self.StringSearch(pat, txt)
 
     def getfiles(self):
         fileName, _ = QtWidgets.QFileDialog.getOpenFileName(self, 'Single File', QtCore.QDir.rootPath(), '*.fna')
@@ -87,7 +136,6 @@ class MyWindow(QtWidgets.QMainWindow):
         global my_file_contents
         my_file_contents = my_file.read().rstrip("\n")
         my_file_contents = my_file_contents.replace('\n', '')
-        print(my_file_contents)
 
 if __name__ == '__main__':
     import sys

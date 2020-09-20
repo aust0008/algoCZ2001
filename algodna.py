@@ -17,6 +17,22 @@ class Ui_MainWindow(object):
         MainWindow.setMaximumSize(QtCore.QSize(16777215, 16777213))
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
+        self.type_lbl = QtWidgets.QLabel(self.centralwidget)
+        self.type_lbl.setGeometry(QtCore.QRect(180, 40, 50, 25))
+        self.type_lbl.setMaximumSize(QtCore.QSize(16777215, 16777215))
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.type_lbl.setFont(font)
+        self.type_lbl.setObjectName("type_lbl")
+        self.typeComboBox = QtWidgets.QComboBox(MainWindow)
+        self.typeComboBox.setGeometry(QtCore.QRect(340, 30, 301, 35))
+        font = QtGui.QFont()
+        font.setUnderline(False)
+        self.typeComboBox.setFont(font)
+        self.typeComboBox.setEditable(False)
+        self.typeComboBox.setObjectName("typeComboBox")
+        self.typeComboBox.addItem("")
+        self.typeComboBox.addItem("")
         self.input_lbl = QtWidgets.QLabel(self.centralwidget)
         self.input_lbl.setGeometry(QtCore.QRect(180, 260, 71, 21))
         font = QtGui.QFont()
@@ -66,11 +82,14 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        self.type_lbl.setText(_translate("MainWindow", "Type:"))
         self.input_lbl.setText(_translate("MainWindow", "Input:"))
         self.uploadBtn.setText(_translate("MainWindow", "Choose File"))
         self.file_lbl.setText(_translate("MainWindow", "File Name:"))
         self.submitBtn.setText(_translate("MainWindow", "Submit"))
         self.output_lbl.setText(_translate("MainWindow", "Output:"))
+        self.typeComboBox.setItemText(0, _translate("MainWindow", "BruteForce"))
+        self.typeComboBox.setItemText(1, _translate("MainWindow", "SpeedString"))
 
 if __name__ == "__main__":
     import sys
